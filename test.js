@@ -5,7 +5,7 @@ const { CstParser } = require("chevrotain");
 const { CandidLexer, CandidParser } = require("./candid"); // Replace with the path to the Candid lexer and parser files.
 const { visitor } = require("./visitor.js");
 // Read the Candid file content from disk.
-const candidExample = fs.readFileSync("test.did", "utf8");
+const candidExample = fs.readFileSync("governance.did", "utf8");
 
 const lexer = new CandidLexer();
 const parser = new CandidParser();

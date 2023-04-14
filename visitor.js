@@ -42,16 +42,13 @@ class CandidAstBuilder extends BaseVisitor {
   }
 
   recordType(ctx) {
-    const properties = {};
-    if (ctx.field) {
-      ctx.field.forEach((fieldCtx) => {
-        const field = this.visit(fieldCtx);
-        properties[field.name] = field.type;
-      });
-    }
-    return { type: "record", properties };
-  }
+    const fields = this.visit(ctx.recordFields);
 
+    return {
+      type: "record",
+      fields,
+    };
+  }
   field(ctx) {
     const name = ctx.Identifier[0].image;
     const type = this.visit(ctx.type[0]);
@@ -98,6 +95,22 @@ class CandidAstBuilder extends BaseVisitor {
 
   arrow(ctx) {
     return "->";
+  }
+
+  tupleType(ctx) {
+    const values = ctx.simpleType.map((child) => this.visit(child));
+    return { type: "tuple", values };
+  }
+
+  recordFields(ctx) {
+    const fields = [];
+    if (ctx.field) {
+      for (const fieldCtx of ctx.field) {
+        const field = this.visit(fieldCtx);
+        fields.push(field);
+      }
+    }
+    return fields;
   }
 
   serviceType(ctx) {

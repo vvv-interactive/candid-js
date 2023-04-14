@@ -2,22 +2,40 @@ const { createToken } = require("chevrotain");
 const { CstParser, Lexer } = require("chevrotain");
 
 // Define the Candid tokens for the lexer.
-const Type = createToken({ name: "Type", pattern: /type/i });
-const Record = createToken({ name: "Record", pattern: /record/i });
-const Variant = createToken({ name: "Variant", pattern: /variant/i });
-const Service = createToken({ name: "Service", pattern: /service/i });
-const Query = createToken({ name: "Service", pattern: /query/i });
+const Type = createToken({ name: "Type", pattern: /\btype\b/i });
+const Record = createToken({ name: "Record", pattern: /\brecord\b/i });
+const Variant = createToken({ name: "Variant", pattern: /\bvariant\b/i });
+const Service = createToken({ name: "Service", pattern: /\bservice\b/i });
+const Query = createToken({ name: "Service", pattern: /\bquery\b/i });
+const Principal = createToken({ name: "Principal", pattern: /\bprincipal\b/i });
 
 const Arrow = createToken({ name: "Arrow", pattern: /->/ });
 const Equal = createToken({ name: "Equal", pattern: /=/ });
 
-const Blob = createToken({ name: "Blob", pattern: /blob/i });
-const Opt = createToken({ name: "Opt", pattern: /opt/i });
+const Blob = createToken({ name: "Blob", pattern: /\bblob\b/i });
+const Opt = createToken({ name: "Opt", pattern: /\bopt\b/i });
+
 const Nat = createToken({ name: "Nat", pattern: /nat/i });
+const Nat8 = createToken({ name: "Nat8", pattern: /nat8/i });
+const Nat16 = createToken({ name: "Nat16", pattern: /nat16/i });
+const Nat32 = createToken({ name: "Nat32", pattern: /nat32/i });
 const Nat64 = createToken({ name: "Nat64", pattern: /nat64/i });
+
+const Int = createToken({ name: "Int", pattern: /int/i });
+const Int8 = createToken({ name: "Int8", pattern: /int8/i });
+const Int16 = createToken({ name: "Int16", pattern: /int16/i });
+const Int32 = createToken({ name: "Int32", pattern: /int32/i });
+const Int64 = createToken({ name: "Int64", pattern: /int64/i });
+
+const Float32 = createToken({ name: "Float32", pattern: /float32/i });
+const Float64 = createToken({ name: "Float64", pattern: /float64/i });
+
+const Bool = createToken({ name: "Bool", pattern: /bool/i });
+
+const Null = createToken({ name: "Null", pattern: /null/i });
+
 const Text = createToken({ name: "Text", pattern: /text/i });
 const Vec = createToken({ name: "Vec", pattern: /vec/i });
-const Principal = createToken({ name: "Principal", pattern: /principal/i });
 const SemiColon = createToken({ name: "SemiColon", pattern: /;/ });
 const Colon = createToken({ name: "Colon", pattern: /:/ });
 const LBrace = createToken({ name: "LBrace", pattern: /{/ });
@@ -60,7 +78,19 @@ const tokensDictionary = [
   Arrow,
   Blob,
   Opt,
+  Nat8,
+  Nat16,
+  Nat32,
   Nat64,
+  Int8,
+  Int16,
+  Int32,
+  Int64,
+  Int,
+  Float32,
+  Float64,
+  Null,
+  Bool,
   Nat,
   Text,
   Vec,
@@ -171,7 +201,19 @@ class CandidParser extends CstParser {
     this.RULE("simpleType", () => {
       this.OR([
         { ALT: () => this.CONSUME(Nat) },
+        { ALT: () => this.CONSUME(Nat8) },
+        { ALT: () => this.CONSUME(Nat16) },
+        { ALT: () => this.CONSUME(Nat32) },
         { ALT: () => this.CONSUME(Nat64) },
+        { ALT: () => this.CONSUME(Float32) },
+        { ALT: () => this.CONSUME(Float64) },
+        { ALT: () => this.CONSUME(Int) },
+        { ALT: () => this.CONSUME(Int8) },
+        { ALT: () => this.CONSUME(Int16) },
+        { ALT: () => this.CONSUME(Int32) },
+        { ALT: () => this.CONSUME(Int64) },
+        { ALT: () => this.CONSUME(Bool) },
+        { ALT: () => this.CONSUME(Null) },
         { ALT: () => this.CONSUME(Text) },
         { ALT: () => this.CONSUME(Principal) },
         { ALT: () => this.CONSUME(Blob) },
