@@ -2,45 +2,45 @@ const { createToken } = require("chevrotain");
 const { CstParser, Lexer } = require("chevrotain");
 
 // Define the Candid tokens for the lexer.
-const Type = createToken({ name: "Type", pattern: /\btype\b/i });
-const Record = createToken({ name: "Record", pattern: /\brecord\b/i });
-const Variant = createToken({ name: "Variant", pattern: /\bvariant\b/i });
-const Service = createToken({ name: "Service", pattern: /\bservice\b/i });
-const Query = createToken({ name: "Query", pattern: /\bquery\b/i });
-const Oneway = createToken({ name: "Oneway", pattern: /\oneway\b/i });
-const Func = createToken({ name: "Func", pattern: /\bfunc\b/i });
+const Type = createToken({ name: "Type", pattern: /\btype\b/ });
+const Record = createToken({ name: "Record", pattern: /\brecord\b/ });
+const Variant = createToken({ name: "Variant", pattern: /\bvariant\b/ });
+const Service = createToken({ name: "Service", pattern: /\bservice\b/ });
+const Query = createToken({ name: "Query", pattern: /\bquery\b/ });
+const Oneway = createToken({ name: "Oneway", pattern: /\oneway\b/ });
+const Func = createToken({ name: "Func", pattern: /\bfunc\b/ });
 
 const Principal = createToken({ name: "Principal", pattern: /\bprincipal\b/i });
 
 const Arrow = createToken({ name: "Arrow", pattern: /->/ });
 const Equal = createToken({ name: "Equal", pattern: /=/ });
 
-const Blob = createToken({ name: "Blob", pattern: /\bblob\b/i });
-const Opt = createToken({ name: "Opt", pattern: /\bopt\b/i });
+const Blob = createToken({ name: "Blob", pattern: /\bblob\b/ });
+const Opt = createToken({ name: "Opt", pattern: /\bopt\b/ });
 
-const Nat = createToken({ name: "Nat", pattern: /\bnat\b/i });
-const Nat8 = createToken({ name: "Nat8", pattern: /\bnat8\b/i });
-const Nat16 = createToken({ name: "Nat16", pattern: /\bnat16\b/i });
-const Nat32 = createToken({ name: "Nat32", pattern: /\bnat32\b/i });
-const Nat64 = createToken({ name: "Nat64", pattern: /\bnat64\b/i });
+const Nat = createToken({ name: "Nat", pattern: /\bnat\b/ });
+const Nat8 = createToken({ name: "Nat8", pattern: /\bnat8\b/ });
+const Nat16 = createToken({ name: "Nat16", pattern: /\bnat16\b/ });
+const Nat32 = createToken({ name: "Nat32", pattern: /\bnat32\b/ });
+const Nat64 = createToken({ name: "Nat64", pattern: /\bnat64\b/ });
 
-const Int = createToken({ name: "Int", pattern: /\bint\b/i });
-const Int8 = createToken({ name: "Int8", pattern: /\bint8\b/i });
-const Int16 = createToken({ name: "Int16", pattern: /\bint16\b/i });
-const Int32 = createToken({ name: "Int32", pattern: /\bint32\b/i });
-const Int64 = createToken({ name: "Int64", pattern: /\bint64\b/i });
+const Int = createToken({ name: "Int", pattern: /\bint\b/ });
+const Int8 = createToken({ name: "Int8", pattern: /\bint8\b/ });
+const Int16 = createToken({ name: "Int16", pattern: /\bint16\b/ });
+const Int32 = createToken({ name: "Int32", pattern: /\bint32\b/ });
+const Int64 = createToken({ name: "Int64", pattern: /\bint64\b/ });
 
-const Float32 = createToken({ name: "Float32", pattern: /\bfloat32\b/i });
-const Float64 = createToken({ name: "Float64", pattern: /\bfloat64\b/i });
+const Float32 = createToken({ name: "Float32", pattern: /\bfloat32\b/ });
+const Float64 = createToken({ name: "Float64", pattern: /\bfloat64\b/ });
 
-const Bool = createToken({ name: "Bool", pattern: /\bbool\b/i });
+const Bool = createToken({ name: "Bool", pattern: /\bbool\b/ });
 
-const Null = createToken({ name: "Null", pattern: /\bnull\b/i });
-const Reserved = createToken({ name: "Reserved", pattern: /\breserved\b/i });
-const Empty = createToken({ name: "Empty", pattern: /\bempty\b/i });
+const Null = createToken({ name: "Null", pattern: /\bnull\b/ });
+const Reserved = createToken({ name: "Reserved", pattern: /\breserved\b/ });
+const Empty = createToken({ name: "Empty", pattern: /\bempty\b/ });
 
-const Text = createToken({ name: "Text", pattern: /\btext\b/i });
-const Vec = createToken({ name: "Vec", pattern: /\bvec\b/i });
+const Text = createToken({ name: "Text", pattern: /\btext\b/ });
+const Vec = createToken({ name: "Vec", pattern: /\bvec\b/ });
 const SemiColon = createToken({ name: "SemiColon", pattern: /;/ });
 const Colon = createToken({ name: "Colon", pattern: /:/ });
 const LBrace = createToken({ name: "LBrace", pattern: /{/ });
@@ -55,10 +55,34 @@ const Comment = createToken({
   pattern: /\/\/.*(\r?\n)?/,
   group: Lexer.SKIPPED,
 });
+function nestedCommentPattern() {
+  const nonCommentCharacters = "[^/*]+";
+  const multiLineComment = "/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/";
+  const singleLineComment = "//[^\\r\\n]*";
+  const comment = `(?:${multiLineComment}|${singleLineComment})`;
+
+  return new RegExp(`/\\*(?:${nonCommentCharacters}|${comment})*?\\*/`);
+}
+
+const MultiLineComment = createToken({
+  name: "MultiLineComment",
+  pattern: nestedCommentPattern(),
+  group: Lexer.SKIPPED,
+});
 const Identifier = createToken({
   name: "Identifier",
-  pattern: /[a-zA-Z_]\w*/,
+  pattern: /(?:[a-zA-Z_]|[0-9])(?:\w)*/,
 });
+
+const IdentifierNumber = createToken({
+  name: "IdentifierNumber",
+  pattern: /\d+/,
+});
+const QuotedIdentifier = createToken({
+  name: "QuotedIdentifier",
+  pattern: /"((?:[^"\\]|\\.)*)"/,
+});
+
 const WhiteSpace = createToken({
   name: "WhiteSpace",
   pattern: /\s+/,
@@ -73,8 +97,10 @@ const LineBreak = createToken({
 });
 
 const tokensDictionary = [
-  WhiteSpace,
+  MultiLineComment,
   Comment,
+  WhiteSpace,
+  QuotedIdentifier,
   Type,
   Record,
   Variant,
@@ -114,6 +140,7 @@ const tokensDictionary = [
   RParen,
   Comma,
   Identifier,
+  IdentifierNumber,
   LineBreak,
   Equal,
 ];
@@ -130,19 +157,27 @@ class CandidParser extends CstParser {
     super(tokensDictionary);
     // Rules
 
+    this.RULE("identifier", () => {
+      this.OR([
+        { ALT: () => this.CONSUME(QuotedIdentifier) },
+        { ALT: () => this.CONSUME(Identifier) },
+      ]);
+    });
     this.RULE("typeDef", () => {
       this.CONSUME(Type);
-      this.CONSUME(Identifier);
+      this.SUBRULE(this.identifier);
       this.CONSUME(Equal);
       this.SUBRULE(this.type);
-      this.CONSUME(SemiColon);
+      this.OPTION(() => {
+        this.CONSUME(SemiColon);
+      });
     });
 
     this.RULE("candid", () => {
       this.MANY(() => {
         this.OR([
           { ALT: () => this.SUBRULE(this.typeDef) },
-          { ALT: () => this.SUBRULE(this.serviceType) },
+          { ALT: () => this.SUBRULE(this.serviceActor) },
         ]);
         this.OPTION1(() => {
           this.CONSUME(SemiColon);
@@ -158,6 +193,10 @@ class CandidParser extends CstParser {
       ]);
     });
     this.RULE("tupleField", () => {
+      this.OPTION(() => {
+        this.CONSUME(IdentifierNumber);
+        this.CONSUME(Colon);
+      });
       this.SUBRULE(this.type);
     });
     this.RULE("recordType", () => {
@@ -183,7 +222,7 @@ class CandidParser extends CstParser {
     });
 
     this.RULE("field", () => {
-      this.CONSUME(Identifier);
+      this.SUBRULE(this.identifier);
       this.CONSUME(Colon);
       this.SUBRULE(this.type);
     });
@@ -210,19 +249,21 @@ class CandidParser extends CstParser {
     });
 
     this.RULE("typeList", () => {
-      this.SUBRULE(this.type);
+      // this.SUBRULE(this.type);
       this.MANY(() => {
-        this.CONSUME(Comma);
+        this.OPTION2(() => {
+          this.SUBRULE(this.identifier);
+          this.CONSUME(Colon);
+        });
         this.SUBRULE2(this.type);
-      });
-      this.OPTION(() => {
-        // Add this block to make the trailing comma optional
-        this.CONSUME2(Comma);
+        this.OPTION(() => {
+          this.CONSUME(Comma);
+        });
       });
     });
 
     this.RULE("variant", () => {
-      this.CONSUME(Identifier);
+      this.SUBRULE(this.identifier);
       this.OPTION(() => {
         this.CONSUME(LBracket);
         this.CONSUME(Nat);
@@ -255,10 +296,11 @@ class CandidParser extends CstParser {
         { ALT: () => this.CONSUME(Text) },
         { ALT: () => this.CONSUME(Principal) },
         { ALT: () => this.CONSUME(Blob) },
-        { ALT: () => this.CONSUME(Identifier) },
+        { ALT: () => this.SUBRULE(this.identifier) },
         { ALT: () => this.SUBRULE(this.functionTypeDecl) },
         { ALT: () => this.SUBRULE(this.optionalType) },
         { ALT: () => this.SUBRULE(this.vecType) },
+        { ALT: () => this.SUBRULE(this.serviceType) },
       ]);
     });
 
@@ -287,7 +329,7 @@ class CandidParser extends CstParser {
         this.SUBRULE(this.typeList);
       });
       this.CONSUME(RParen);
-      this.SUBRULE(this.arrow);
+      this.CONSUME(Arrow);
       this.CONSUME2(LParen);
       this.OPTION2(() => {
         this.SUBRULE2(this.typeList);
@@ -301,19 +343,35 @@ class CandidParser extends CstParser {
       });
     });
 
-    this.RULE("arrow", () => {
-      this.CONSUME(Arrow); // Match the "->" symbol
+    this.RULE("serviceActor", () => {
+      this.CONSUME(Service);
+      this.OPTION4(() => {
+        this.SUBRULE(this.identifier, { NAME: "xxx" });
+      });
+      this.CONSUME(Colon);
+      this.OPTION(() => {
+        this.CONSUME(LParen);
+        this.OPTION2(() => {
+          this.SUBRULE(this.typeList);
+        });
+        this.CONSUME(RParen);
+        this.CONSUME(Arrow);
+      });
+      this.OR([
+        { ALT: () => this.SUBRULE(this.serviceDeclr) },
+        { ALT: () => this.SUBRULE(this.serviceTypeIdentifier) },
+      ]);
+    });
+    this.RULE("serviceTypeIdentifier", () => {
+      this.SUBRULE(this.identifier);
     });
 
     this.RULE("serviceType", () => {
       this.CONSUME(Service);
-      this.CONSUME(Colon);
-      this.CONSUME(LParen);
-      this.OPTION(() => {
-        this.SUBRULE(this.typeList);
-      });
-      this.CONSUME(RParen);
-      this.CONSUME(Arrow);
+      this.SUBRULE(this.serviceDeclr);
+    });
+
+    this.RULE("serviceDeclr", () => {
       this.CONSUME(LBrace);
       this.OPTION1(() => {
         this.SUBRULE(this.method);
@@ -321,7 +379,7 @@ class CandidParser extends CstParser {
           this.CONSUME(SemiColon);
           this.SUBRULE2(this.method);
         });
-        this.OPTION2(() => {
+        this.OPTION3(() => {
           this.CONSUME2(SemiColon);
         });
       });
@@ -329,9 +387,12 @@ class CandidParser extends CstParser {
     });
 
     this.RULE("method", () => {
-      this.CONSUME(Identifier); // Match method name
+      this.SUBRULE(this.identifier);
       this.CONSUME(Colon);
-      this.SUBRULE(this.functionType);
+      this.OR([
+        { ALT: () => this.SUBRULE2(this.identifier) },
+        { ALT: () => this.SUBRULE(this.functionType) },
+      ]);
     });
 
     this.performSelfAnalysis();
