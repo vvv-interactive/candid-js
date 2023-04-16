@@ -1,4 +1,4 @@
-# js_candid_parser
+# candid-js
 
 Not finished.
 
