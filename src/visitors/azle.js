@@ -5,6 +5,7 @@ let candidParser = new CandidParser();
 const BaseVisitor = candidParser.getBaseCstVisitorConstructor();
 const TYPE_SUBSTITUTION = {
   principal: "Principal",
+  text: "string",
 };
 
 const TT = (x) => (TYPE_SUBSTITUTION[x] ? TYPE_SUBSTITUTION[x] : x);
@@ -148,7 +149,6 @@ class CandidAstBuilder extends BaseVisitor {
   }
   functionTypeDecl(ctx) {
     let x = this.visit(ctx.functionType[0]);
-    console.log(x);
     return `Func<${x.type || "Update"}<(${x.inputs
       .map((a, idx) => `arg${idx}: ${a}`)
       .join(",")}) => ${x.outputs[0] || "void"}>>`;
@@ -181,9 +181,11 @@ class CandidAstBuilder extends BaseVisitor {
           typeof x.func === "string"
             ? `${x.name}:${x.func};\n`
             : `@service${x.func.type}\n${x.name}: (${
-                x.func.inputs ? x.func.inputs.join(", ") : ""
+                x.func.inputs
+                  ? x.func.inputs.map((a, idx) => `arg${idx}: ${a}`).join(", ")
+                  : ""
               }) => CallResult<${
-                x.func.outputs ? x.func.outputs[0] : "void"
+                x.func?.outputs[0] ? x.func.outputs[0] : "void"
               }>;\n`
         )
         .join("\n")}
