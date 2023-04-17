@@ -1,8 +1,11 @@
 {
-  "name": "candidast",
+  "name": "candid-js",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "bin": {
+    "candid-js": "./cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
