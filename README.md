@@ -2,7 +2,22 @@
 
 Candid AST parser using Chevrotain library.
 
-Visitor can be modified to get different output.
+Input: candid
+Output: azle | candid | json
+
+### Usage CLI:
+
+```
+npx candid-js@latest some.did azle
+```
+
+### Usage JS:
+
+```
+import {transpile} from "candid-js"
+
+let output = transpile(didText, "json")
+```
 
 Testing strategy:
 Candid -> AST -> Candid -> didc check
@@ -10,8 +25,9 @@ Candid -> AST -> Candid -> didc check
 Notice:
 
 - The json output may change
-- Candid import not included
-- Candid edge cases may not be included
+- Candid import not implemented
+- Candid edge cases may not transpile properly, however most SDK generated Candid should be fine
+- Visitor can be easily modified to get different output.
 
 Example output:
 
