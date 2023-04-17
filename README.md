@@ -7,16 +7,16 @@ Output: azle | candid | json
 
 ### Usage CLI:
 
-```
+```bash
 npx candid-js@latest some.did azle
 ```
 
 ### Usage JS:
 
-```
-import {transpile} from "candid-js"
+```js
+import { transpile } from "candid-js";
 
-let output = transpile(didText, "json")
+let output = transpile(didText, "json");
 ```
 
 Testing strategy:
