@@ -151,7 +151,7 @@ class CandidAstBuilder extends BaseVisitor {
     console.log(x);
     return `Func<${x.type || "Update"}<(${x.inputs
       .map((a, idx) => `arg${idx}: ${a}`)
-      .join(",")}) => ${x.outputs[0]}>>`;
+      .join(",")}) => ${x.outputs[0] || "void"}>>`;
   }
 
   functionType(ctx) {
